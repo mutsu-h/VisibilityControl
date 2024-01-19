@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 
@@ -6,7 +7,7 @@ public class VisibilityControlDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-        if(!DisplayInInspectorWindowCheck(base.attribute as VisibilityControlAttribute, property))
+        if (!DisplayInInspectorWindowCheck(base.attribute as VisibilityControlAttribute, property))
             return;
 
         EditorGUI.PropertyField(position, property, label, true);
@@ -28,30 +29,45 @@ public class VisibilityControlDrawer : PropertyDrawer
 
         if (prop == null)
         {
-            Debug.LogError("適切な変数名を入力してください");
+            Debug.LogError($"VisibilityControlAttributeの引数に適切な変数名を入力してください\n'{attr.ValueName}' は存在しないもしくは使用できません\n<English>\nPlease input an appropriate variable name for the argument of VisibilityControlAttribute\nCannot find or use '{attr.ValueName}' property \n");
         }
         else
         {
             //変数の型の比較
             if (prop.propertyType == SerializedPropertyType.Boolean)
             {
-                if (prop.boolValue) return true;
-            }
-            else if (prop.propertyType == SerializedPropertyType.Enum)
-            {
-                if (attr.SwapConditions)
+                if (attr.ReverseConditions)
                 {
-                    if ((int)attr.EnumValue != prop.enumValueIndex) return true;
+                    if (!prop.boolValue) return true;
                 }
                 else
                 {
-                    //比較
-                    if ((int)attr.EnumValue == prop.enumValueIndex) return true;
+                    if (prop.boolValue) return true;
+                }
+            }
+            else if (prop.propertyType == SerializedPropertyType.Enum)
+            {
+                if (attr.EnumValue != null &&
+                    attr.EnumValue.GetType().IsEnum)
+                {
+                    if (attr.ReverseConditions)
+                    {
+                        if ((int)attr.EnumValue != prop.enumValueIndex) return true;
+                    }
+                    else
+                    {
+                        //比較
+                        if ((int)attr.EnumValue == prop.enumValueIndex) return true;
+                    }
+                }
+                else
+                {
+                    Debug.LogError("引数には列挙子を指定してください\n<English>\nPlease specify an enumerator as the argument \n");
                 }
             }
             else
             {
-                Debug.LogError("列挙型かbool型を使用してください");
+                Debug.LogError("列挙型かbool型を使用してください\n<English>\nPlease use an enum type or a bool type \n");
             }
         }
 

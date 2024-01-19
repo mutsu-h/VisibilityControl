@@ -7,13 +7,13 @@ public class VisibilityControlAttribute : PropertyAttribute
     public readonly string ValueName;
     //指定したい列挙子を入れる
     public readonly object EnumValue;
-    //true それ以外の場合、
-    public readonly bool SwapConditions;
+    //条件の反転、
+    public readonly bool ReverseConditions;
 
-    public VisibilityControlAttribute(string valueName, object enumValue = null, bool swapConditions = false)
+    public VisibilityControlAttribute(string valueName, object enumValue = null, bool ReverseConditions = false)
     {
         this.ValueName = valueName;
         this.EnumValue = enumValue;
-        this.SwapConditions = swapConditions;
+        this.ReverseConditions = ReverseConditions;
     }
 }
